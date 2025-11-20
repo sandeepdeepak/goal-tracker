@@ -224,35 +224,10 @@ const App = () => {
             newCompletedDates = [...habit.completedDates, targetDate];
           }
 
-          // Calculate streak - count consecutive days ending with today
-          let streak = 0;
-          const todayString = getTodayDate();
-
-          // Start from today and count backwards
-          const today = new Date(todayString);
-          let currentDate = new Date(today);
-
-          // Keep checking consecutive days backwards
-          while (true) {
-            const currentDateString = currentDate.toISOString().split("T")[0];
-
-            if (newCompletedDates.includes(currentDateString)) {
-              streak++;
-              // Move to previous day
-              currentDate.setDate(currentDate.getDate() - 1);
-            } else {
-              // Break the streak if this day is not completed
-              break;
-            }
-
-            // Safety check to avoid infinite loop (max 365 days)
-            if (streak >= 365) break;
-          }
-
           return {
             ...habit,
             completedDates: newCompletedDates,
-            streak: streak,
+            streak: newCompletedDates.length, // Simplified streak calculation
           };
         }
         return habit;
