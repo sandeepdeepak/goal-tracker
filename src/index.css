@@ -14,7 +14,7 @@ body {
 }
 
 .app {
-  max-width: 800px;
+  max-width: 1400px;
   margin: 0 auto;
   background: #161b22;
   border-radius: 16px;
@@ -49,13 +49,69 @@ body {
   background: #0d1117;
 }
 
-.add-habit-form {
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.habits-column,
+.reminders-column {
+  min-height: 100%;
+}
+
+.add-habit-accordion {
   background: #21262d;
-  padding: 24px;
   border-radius: 12px;
   margin-bottom: 24px;
   border: 1px solid #30363d;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #30363d;
+}
+
+.accordion-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.accordion-icon {
+  font-size: 1rem;
+  color: #e6edf3;
+  transition: transform 0.3s ease;
+  user-select: none;
+  margin-left: 10px;
+}
+
+.accordion-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.accordion-content.expanded {
+  max-height: 400px;
+}
+
+.add-habit-form {
+  padding: 24px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+  border-radius: 0;
 }
 
 .form-group {
@@ -387,7 +443,258 @@ body {
   display: none;
 }
 
+/* Reminders Styles */
+.reminders-section {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.reminders-section h2 {
+  color: #e6edf3;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.add-reminder-form {
+  margin-bottom: 24px;
+}
+
+.add-reminder-form .form-group {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 0;
+}
+
+.add-reminder-form input {
+  flex: 1;
+}
+
+.reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reminder-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.reminder-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: #484f58;
+  transform: translateY(-1px);
+}
+
+.reminder-card.completed {
+  background: rgba(35, 134, 54, 0.1);
+  border-color: rgba(35, 134, 54, 0.3);
+  opacity: 0.8;
+}
+
+.reminder-content {
+  flex: 1;
+  margin-right: 12px;
+}
+
+.reminder-content p {
+  margin: 0 0 4px 0;
+  color: #e6edf3;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.reminder-content p.completed-text {
+  text-decoration: line-through;
+  color: #7d8590;
+}
+
+.reminder-date {
+  font-size: 0.8rem;
+  color: #7d8590;
+}
+
+.reminder-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.reminder-actions .btn {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  min-width: auto;
+}
+
+.btn-warning {
+  background: #fb8500;
+  color: white;
+}
+
+.btn-warning:hover {
+  background: #ffb700;
+  transform: translateY(-1px);
+}
+
+/* Reminder Toggle Button Styles */
+.reminder-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  margin-right: 8px;
+}
+
+.reminder-toggle-btn.pending {
+  background: #30363d;
+  border: 2px solid #484f58;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.reminder-toggle-btn.pending:hover {
+  background: #484f58;
+  border-color: #6e7681;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.reminder-toggle-btn.completed {
+  background: #238636;
+  border: 2px solid #2ea043;
+  box-shadow: 0 2px 8px rgba(35, 134, 54, 0.3);
+}
+
+.reminder-toggle-btn.completed:hover {
+  background: #2ea043;
+  border-color: #46954a;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+}
+
+.reminder-toggle-btn.completed::after {
+  content: "✓";
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Confirm Dialog Styles */
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.confirm-dialog-overlay.open {
+  opacity: 1;
+}
+
+.confirm-dialog {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.2s ease;
+  margin: 20px;
+}
+
+.confirm-dialog.open {
+  transform: scale(1) translateY(0);
+}
+
+.confirm-dialog-header {
+  padding: 24px 24px 16px 24px;
+  border-bottom: 1px solid #30363d;
+}
+
+.confirm-dialog-header h3 {
+  margin: 0;
+  color: #f0f6fc;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.confirm-dialog-body {
+  padding: 20px 24px;
+}
+
+.confirm-dialog-body p {
+  margin: 0;
+  color: #e6edf3;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.confirm-dialog-actions {
+  padding: 16px 24px 24px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.confirm-dialog-actions .btn {
+  min-width: 80px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .app {
+    max-width: 800px;
+  }
+}
+
 @media (max-width: 768px) {
+  .confirm-dialog {
+    min-width: 320px;
+    margin: 16px;
+  }
+
+  .confirm-dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .confirm-dialog-actions .btn {
+    width: 100%;
+  }
+
   .habit-header {
     flex-direction: column;
     align-items: flex-start;
@@ -422,5 +729,32 @@ body {
 
   .completion-indicator {
     font-size: 14px;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .reminders-section {
+    padding: 20px;
+  }
+
+  .reminder-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .reminder-content {
+    margin-right: 0;
+  }
+
+  .reminder-actions {
+    justify-content: flex-end;
+  }
+
+  .add-reminder-form .form-group {
+    flex-direction: column;
+    gap: 8px;
   }
 }
