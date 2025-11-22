@@ -12,6 +12,7 @@ const App = () => {
     message: "",
     onConfirm: () => {},
   });
+  const [expandedHabits, setExpandedHabits] = useState(new Set());
 
   // Load habits from localStorage on component mount
   const [habits, setHabits] = useState(() => {
@@ -318,6 +319,45 @@ const App = () => {
     });
   };
 
+  // Toggle habit accordion
+  const toggleHabitAccordion = (habitId) => {
+    const newExpandedHabits = new Set(expandedHabits);
+    if (newExpandedHabits.has(habitId)) {
+      newExpandedHabits.delete(habitId);
+    } else {
+      newExpandedHabits.add(habitId);
+    }
+    setExpandedHabits(newExpandedHabits);
+  };
+
+  // Get current week dates only (for collapsed view)
+  const getCurrentWeekDates = () => {
+    const days = [];
+    const today = new Date();
+    const todayString = today.toISOString().split("T")[0];
+
+    // Show current week dates (7 days ending with today)
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - 6); // Start 6 days before today
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      const dateString = date.toISOString().split("T")[0];
+
+      days.push({
+        date: dateString,
+        dayName: date.toLocaleDateString("en-US", { weekday: "short" }),
+        dayNumber: date.getDate(),
+        monthName: date.toLocaleDateString("en-US", { month: "short" }),
+        isToday: dateString === todayString,
+        isFuture: dateString > todayString,
+      });
+    }
+
+    return days;
+  };
+
   return (
     <div className="app">
       <div className="header">
@@ -395,10 +435,10 @@ const App = () => {
                 </div>
               ) : (
                 habits.map((habit) => (
-                  <div key={habit.id} className="habit-card">
+                  <div key={habit.id} className="habit-card-accordion">
                     {editingHabit && editingHabit.id === habit.id ? (
                       // Edit Mode
-                      <div>
+                      <div className="habit-card-content">
                         <div className="form-group">
                           <label>Habit Name</label>
                           <input
@@ -441,109 +481,171 @@ const App = () => {
                         </div>
                       </div>
                     ) : (
-                      // View Mode
+                      // Accordion Mode
                       <div>
-                        <div className="habit-header">
-                          <h3 className="habit-name">{habit.name}</h3>
-                          <div className="habit-streak">
-                            {habit.streak} day
-                            {habit.streak !== 1 ? "s" : ""}
-                          </div>
-                        </div>
-
-                        {habit.description && (
-                          <p className="habit-description">
-                            {habit.description}
-                          </p>
-                        )}
-
-                        {/* 7-Day Calendar for this habit */}
-                        <div className="habit-calendar">
-                          <div className="calendar-header">
-                            <button
-                              className="calendar-nav-btn"
-                              onClick={goToPreviousWeek}
-                              title="Previous Week"
-                            >
-                              ←
-                            </button>
-                            <div className="calendar-week-info">
-                              <h4 className="calendar-title">
-                                {getCurrentWeekDescription()}
-                              </h4>
-                              {dateOffset !== 0 && (
-                                <button
-                                  className="calendar-today-btn"
-                                  onClick={goToCurrentWeek}
-                                >
-                                  Go to Today
-                                </button>
-                              )}
+                        {/* Collapsed View - Always Visible */}
+                        <div
+                          className="habit-accordion-header"
+                          onClick={() => toggleHabitAccordion(habit.id)}
+                        >
+                          <div className="habit-header-content">
+                            <h3 className="habit-name">{habit.name}</h3>
+                            <div className="habit-streak">
+                              {habit.streak} day{habit.streak !== 1 ? "s" : ""}
                             </div>
-                            <button
-                              className="calendar-nav-btn"
-                              onClick={goToNextWeek}
-                              title="Next Week"
-                            >
-                              →
-                            </button>
                           </div>
-                          <div className="calendar-days">
-                            {getNext7Days().map((day) => (
-                              <div
-                                key={day.date}
-                                className={`calendar-day ${
-                                  day.isToday ? "today" : ""
-                                } ${
-                                  day.isFuture
-                                    ? "future"
-                                    : isCompletedOnDate(habit, day.date)
-                                    ? "completed"
-                                    : "pending"
-                                }`}
-                                onClick={() => {
-                                  if (!day.isFuture) {
-                                    toggleHabitCompletionForDate(
-                                      habit.id,
-                                      day.date
-                                    );
-                                  }
-                                }}
-                                style={{
-                                  cursor: day.isFuture
-                                    ? "not-allowed"
-                                    : "pointer",
-                                }}
-                              >
-                                <div className="day-name">{day.dayName}</div>
-                                <div className="day-number">
-                                  {day.dayNumber}
+
+                          {/* Current Week Calendar - Collapsed View */}
+                          <div className="habit-calendar-collapsed">
+                            <div className="calendar-days">
+                              {getCurrentWeekDates().map((day) => (
+                                <div
+                                  key={day.date}
+                                  className={`calendar-day-small ${
+                                    day.isToday ? "today" : ""
+                                  } ${
+                                    day.isFuture
+                                      ? "future"
+                                      : isCompletedOnDate(habit, day.date)
+                                      ? "completed"
+                                      : "pending"
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!day.isFuture) {
+                                      toggleHabitCompletionForDate(
+                                        habit.id,
+                                        day.date
+                                      );
+                                    }
+                                  }}
+                                  style={{
+                                    cursor: day.isFuture
+                                      ? "not-allowed"
+                                      : "pointer",
+                                  }}
+                                >
+                                  <div className="day-number-small">
+                                    {day.dayNumber}
+                                  </div>
                                 </div>
-                                <div className="completion-indicator">
-                                  {day.isFuture
-                                    ? "🔒"
-                                    : isCompletedOnDate(habit, day.date)
-                                    ? "✅"
-                                    : "⭕"}
-                                </div>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </div>
+
+                          <span
+                            className={`habit-accordion-icon ${
+                              expandedHabits.has(habit.id) ? "expanded" : ""
+                            }`}
+                          >
+                            ▼
+                          </span>
                         </div>
 
-                        <div className="habit-actions">
-                          <button
-                            onClick={() => startEdit(habit)}
-                            className="btn btn-secondary"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => deleteHabit(habit.id)}
-                            className="btn btn-danger"
-                          >
-                            Delete
-                          </button>
+                        {/* Expanded View - Show when opened */}
+                        <div
+                          className={`habit-accordion-content ${
+                            expandedHabits.has(habit.id) ? "expanded" : ""
+                          }`}
+                        >
+                          <div className="habit-expanded-content">
+                            {habit.description && (
+                              <p className="habit-description">
+                                {habit.description}
+                              </p>
+                            )}
+
+                            {/* Full Calendar with Navigation */}
+                            <div className="habit-calendar">
+                              <div className="calendar-header">
+                                <button
+                                  className="calendar-nav-btn"
+                                  onClick={goToPreviousWeek}
+                                  title="Previous Week"
+                                >
+                                  ←
+                                </button>
+                                <div className="calendar-week-info">
+                                  <h4 className="calendar-title">
+                                    {getCurrentWeekDescription()}
+                                  </h4>
+                                  {dateOffset !== 0 && (
+                                    <button
+                                      className="calendar-today-btn"
+                                      onClick={goToCurrentWeek}
+                                    >
+                                      Go to Today
+                                    </button>
+                                  )}
+                                </div>
+                                <button
+                                  className="calendar-nav-btn"
+                                  onClick={goToNextWeek}
+                                  title="Next Week"
+                                >
+                                  →
+                                </button>
+                              </div>
+                              <div className="calendar-days">
+                                {getNext7Days().map((day) => (
+                                  <div
+                                    key={day.date}
+                                    className={`calendar-day ${
+                                      day.isToday ? "today" : ""
+                                    } ${
+                                      day.isFuture
+                                        ? "future"
+                                        : isCompletedOnDate(habit, day.date)
+                                        ? "completed"
+                                        : "pending"
+                                    }`}
+                                    onClick={() => {
+                                      if (!day.isFuture) {
+                                        toggleHabitCompletionForDate(
+                                          habit.id,
+                                          day.date
+                                        );
+                                      }
+                                    }}
+                                    style={{
+                                      cursor: day.isFuture
+                                        ? "not-allowed"
+                                        : "pointer",
+                                    }}
+                                  >
+                                    <div className="day-name">
+                                      {day.dayName}
+                                    </div>
+                                    <div className="day-number">
+                                      {day.dayNumber}
+                                    </div>
+                                    <div className="completion-indicator">
+                                      {day.isFuture
+                                        ? "🔒"
+                                        : isCompletedOnDate(habit, day.date)
+                                        ? "✅"
+                                        : "⭕"}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="habit-actions">
+                              <button
+                                onClick={() => startEdit(habit)}
+                                className="btn btn-secondary"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => deleteHabit(habit.id)}
+                                className="btn btn-danger"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}

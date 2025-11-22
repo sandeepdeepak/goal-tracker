@@ -208,6 +208,145 @@ body {
   gap: 20px;
 }
 
+/* Habit Card Accordion Styles */
+.habit-card-accordion {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.habit-card-accordion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: #484f58;
+}
+
+.habit-card-content {
+  padding: 24px;
+}
+
+.habit-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.habit-accordion-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.habit-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.habit-calendar-collapsed {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0 20px;
+}
+
+.habit-calendar-collapsed .calendar-days {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+}
+
+.calendar-day-small {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-day-small:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.calendar-day-small.completed {
+  background: #238636;
+  border-color: #2ea043;
+}
+
+.calendar-day-small.pending {
+  background: #30363d;
+  border-color: #484f58;
+}
+
+.calendar-day-small.future {
+  background: #1c2128;
+  border-color: #21262d;
+  opacity: 0.6;
+}
+
+.calendar-day-small.future:hover {
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.calendar-day-small.today {
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.5);
+}
+
+.day-number-small {
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.calendar-day-small.pending .day-number-small {
+  color: #7d8590;
+}
+
+.calendar-day-small.future .day-number-small {
+  color: #484f58;
+}
+
+.habit-accordion-icon {
+  font-size: 14px;
+  color: #e6edf3;
+  transition: transform 0.3s ease;
+  user-select: none;
+}
+
+.habit-accordion-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.habit-accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  border-top: 1px solid #30363d;
+}
+
+.habit-accordion-content.expanded {
+  max-height: 600px;
+}
+
+.habit-expanded-content {
+  padding: 24px;
+}
+
 .habit-card {
   background: #21262d;
   border: 1px solid #30363d;
@@ -243,9 +382,6 @@ body {
 }
 
 .habit-streak {
-  position: absolute;
-  top: 20px;
-  right: 20px;
   background: rgba(255, 215, 0, 0.15);
   color: #ffd700;
   padding: 4px 12px;
@@ -253,6 +389,13 @@ body {
   font-size: 12px;
   font-weight: 600;
   border: 1px solid rgba(255, 215, 0, 0.3);
+  white-space: nowrap;
+}
+
+.habit-card .habit-streak {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .habit-actions {
