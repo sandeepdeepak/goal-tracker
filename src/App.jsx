@@ -413,61 +413,63 @@ const App = () => {
       </div>
 
       <div className="content">
-        {/* Add New Habit Accordion */}
-        <div className="add-habit-accordion">
-          <div
-            className="accordion-header"
-            onClick={() => setIsAddHabitExpanded(!isAddHabitExpanded)}
-          >
-            <h2 style={{ margin: 0, color: "#e6edf3" }}>Add New Habit</h2>
-            <span
-              className={`accordion-icon ${
-                isAddHabitExpanded ? "expanded" : ""
-              }`}
-            >
-              ▼
-            </span>
-          </div>
-
-          <div
-            className={`accordion-content ${
-              isAddHabitExpanded ? "expanded" : ""
-            }`}
-          >
-            <form className="add-habit-form" onSubmit={addHabit}>
-              <div className="form-group">
-                <label>Habit Name *</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Drink 8 glasses of water"
-                  value={newHabit.name}
-                  onChange={(e) =>
-                    setNewHabit({ ...newHabit, name: e.target.value })
-                  }
-                />
-              </div>
-              <div className="form-group">
-                <label>Description (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Stay hydrated throughout the day"
-                  value={newHabit.description}
-                  onChange={(e) =>
-                    setNewHabit({ ...newHabit, description: e.target.value })
-                  }
-                />
-              </div>
-              <button type="submit" className="btn btn-primary">
-                Add Habit
-              </button>
-            </form>
-          </div>
-        </div>
-
         {/* Content Grid - Side by Side Layout */}
         <div className="content-grid">
           {/* Habits Column */}
           <div className="habits-column">
+            {/* Add New Habit Accordion */}
+            <div className="add-habit-accordion">
+              <div
+                className="accordion-header"
+                onClick={() => setIsAddHabitExpanded(!isAddHabitExpanded)}
+              >
+                <h2 style={{ margin: 0, color: "#e6edf3" }}>Add New Habit</h2>
+                <span
+                  className={`accordion-icon ${
+                    isAddHabitExpanded ? "expanded" : ""
+                  }`}
+                >
+                  ▼
+                </span>
+              </div>
+
+              <div
+                className={`accordion-content ${
+                  isAddHabitExpanded ? "expanded" : ""
+                }`}
+              >
+                <form className="add-habit-form" onSubmit={addHabit}>
+                  <div className="form-group">
+                    <label>Habit Name *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Drink 8 glasses of water"
+                      value={newHabit.name}
+                      onChange={(e) =>
+                        setNewHabit({ ...newHabit, name: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Description (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Stay hydrated throughout the day"
+                      value={newHabit.description}
+                      onChange={(e) =>
+                        setNewHabit({
+                          ...newHabit,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary">
+                    Add Habit
+                  </button>
+                </form>
+              </div>
+            </div>
             {/* Habits List */}
             <div className="habits-list">
               {habits.length === 0 ? (
