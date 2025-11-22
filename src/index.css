@@ -225,6 +225,28 @@ body {
   border-color: #484f58;
 }
 
+.habit-card-accordion.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  cursor: grabbing;
+  z-index: 1000;
+}
+
+.habit-card-accordion.drag-over {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(255, 215, 0, 0.3);
+}
+
+.habit-card-accordion[draggable="true"] {
+  cursor: grab;
+}
+
+.habit-card-accordion[draggable="false"] {
+  cursor: default;
+}
+
 .habit-card-content {
   padding: 24px;
 }

@@ -13,6 +13,8 @@ const App = () => {
     onConfirm: () => {},
   });
   const [expandedHabits, setExpandedHabits] = useState(new Set());
+  const [draggedHabit, setDraggedHabit] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
 
   // Load habits from localStorage on component mount
   const [habits, setHabits] = useState(() => {
@@ -358,6 +360,51 @@ const App = () => {
     return days;
   };
 
+  // Drag and drop handlers
+  const handleDragStart = (e, habit, index) => {
+    setDraggedHabit({ habit, index });
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverIndex(index);
+  };
+
+  const handleDragLeave = (e) => {
+    // Only clear dragOverIndex if we're leaving the entire card
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setDragOverIndex(null);
+    }
+  };
+
+  const handleDrop = (e, dropIndex) => {
+    e.preventDefault();
+    setDragOverIndex(null);
+
+    if (!draggedHabit || draggedHabit.index === dropIndex) {
+      setDraggedHabit(null);
+      return;
+    }
+
+    const newHabits = [...habits];
+    const [movedHabit] = newHabits.splice(draggedHabit.index, 1);
+    newHabits.splice(dropIndex, 0, movedHabit);
+
+    setHabits(newHabits);
+    setDraggedHabit(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedHabit(null);
+    setDragOverIndex(null);
+  };
+
   return (
     <div className="app">
       <div className="header">
@@ -434,8 +481,19 @@ const App = () => {
                   </div>
                 </div>
               ) : (
-                habits.map((habit) => (
-                  <div key={habit.id} className="habit-card-accordion">
+                habits.map((habit, index) => (
+                  <div
+                    key={habit.id}
+                    className={`habit-card-accordion ${
+                      draggedHabit?.index === index ? "dragging" : ""
+                    } ${dragOverIndex === index ? "drag-over" : ""}`}
+                    draggable={editingHabit?.id !== habit.id}
+                    onDragStart={(e) => handleDragStart(e, habit, index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
+                  >
                     {editingHabit && editingHabit.id === habit.id ? (
                       // Edit Mode
                       <div className="habit-card-content">
